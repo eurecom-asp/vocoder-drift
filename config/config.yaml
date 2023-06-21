@@ -1,0 +1,8 @@
+device: 'cuda'
+val_rate: 200
+print_rate: 1
+
+epochs: 3
+batch_size: 8
+lr: 0.00005
+momentum: 0.9
