@@ -13,20 +13,20 @@ Training code is provided in `train_reverser.py`. You will need:
 
 Some dummy files (10 utterances) are provided as an example in the `demo_files` folder. For more details about how to provide all of the above to the script, run the script itself with the help flag (`python train_reverser.py -h`).  
 To launch a very short training (that uses the same 10 files for training and validation), run:
-```
+```bash
 python train_reverser.py --wav_root demo_files/anon_wavs/ --xv_root demo_files/xvectors_anonymized/ --ids_list demo_files/demo_files.txt --ids_list_val demo_files/demo_files.txt
 ```
 
 ## Training the semi-informed attack
 The procedure is mostly the same as the drift reversal, except that $\mathbf{x}_p$ vectors are not needed. A short training with the same 10 files as above can be run with:
-```
+```bash
 python train_reverser_semiinformed.py --wav_root demo_files/anon_wavs/ --ids_list demo_files/demo_files.txt --ids_list_val demo_files/demo_files.txt
 ```
 
 ## Fine-tuning
 Instead of training from scratch, it is possible to fine-tune the ECAPA models by providing a checkpoint path as value to the `eacapath` constructor argument when instantiating `atk_tools.Reverser` or `atk_tools.SemiInformedReverser`.
-```
-reverser = Reverser(ecapah='path/to/your/ecapa/checkpoint')
+```python
+reverser = Reverser(ecapath='path/to/your/ecapa/checkpoint')
 ```
 [The pretrained checkpoint I used is available for download at this link](https://nextcloud.eurecom.fr/s/3cEJqmLfrxyrXJw).
 
@@ -35,7 +35,7 @@ Both attacks are system-dependent, and you should therefore train them for the s
 However, as a proof of concept (as in *"I swear I didn't make those numbers up"*), I am providing the checkpoints of the [drift reverser](https://nextcloud.eurecom.fr/s/T6TWJMWFBik52Pc) and the [semi-informed](https://nextcloud.eurecom.fr/s/t3DCJSpBrktGoa2) attacker for the HiFi-GAN version of the anonymization system.
 
 They are pytorch state dictionaries and you load them as usual:
-```
+```python
 reverser = Reverser().eval().to('cuda')
 reverser.load_state_dict(torch.load('/path/to/checkpoint'))
 # the state dicts contain cuda tensors, remember you have to fiddle with map_location if you wanna have them on cpu
@@ -48,11 +48,11 @@ As a result, all files to attack must be in the same folder. I'm sure you'll liv
 The files also have to follow the usual naming convention `<utterance_id>_gen.wav`.
 
 For a dummy run of the drift reversal:
-```
+```bash
 python apply_attack.py --reverser_path path/to/reverser/checkpoint --in_fold demo_files/anon_wavs/ --out_fold demo_files/out/ --target_fold demo_files/xvectors_anonymized/
 ```
 ...and the semi-informed:
-```
+```bash
 python apply_attack_semiinformed.py --reverser_path path/to/checkpoint --in_fold demo_files/anon_wavs/ --out_fold demo_files/out/
 ```
 
